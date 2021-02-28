@@ -51,6 +51,7 @@
 
 <script>
 import NavContent from './views/NavContent.vue';
+const axios = require('axios');
   export default {
     components:{
       "nav-content":NavContent
@@ -58,13 +59,14 @@ import NavContent from './views/NavContent.vue';
     data() {
       return{ 
         drawer: null,
-        text:""
+        text:"",
+        resp:""
       }
       
     },
     computed:{
       countSent(){
-        if(this.text=="")
+        if(this.text=="" || this.text == null)
           return 0;
         return this.text.split('.').length-1;
       },
@@ -73,9 +75,23 @@ import NavContent from './views/NavContent.vue';
       }
     },
     methods:{
-      sendText(){
+     async sendText(){
         if(this.alarm){
         alert("Введено слишком много предложений!"); 
+        }
+        else{
+        await axios({
+           method:'post',
+           url: "http://localhost:8080/",
+           data: {
+             id:1,
+             input_text:this.text
+           }
+
+         }).then(response => {
+        this.resp = response.data.output_text;
+         });
+          console.log(this.resp);
         }
     }
   }
