@@ -1,5 +1,8 @@
 package com.proj
 
+import com.proj.model.InputMessage
+import com.proj.model.OutputMessage
+import com.proj.service.HighlightService
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.web.bind.annotation.PostMapping
@@ -8,14 +11,15 @@ import org.springframework.web.bind.annotation.RestController
 
 @SpringBootApplication
 @RestController("/")
-class Main{
+class MainController(var highlightService: HighlightService) {
 
-	@PostMapping
-	fun post(@RequestBody inputMessage: InputMessage) : OutputMessage{
-		return OutputMessage(inputMessage.id, inputMessage.input_text)
-	}
+    @PostMapping
+    fun post(@RequestBody inputMessage: InputMessage)
+    : OutputMessage {
+        return highlightService.getOutput(inputMessage)
+    }
 }
 
 fun main(args: Array<String>) {
-	runApplication<Main>(*args)
+    runApplication<MainController>(*args)
 }
