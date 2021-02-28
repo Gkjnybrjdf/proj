@@ -4,7 +4,7 @@
       v-model="drawer"
       app
     >
-      <!--  -->
+      <nav-content></nav-content>
     </v-navigation-drawer>
 
     <v-app-bar app>
@@ -24,8 +24,14 @@
           placeholder="Введите текст"
           clearable
           clear-icon="mdi-close-circle"
+          v-model="text"
           />
         </v-card>
+        <v-row
+        align="center"
+        justify="space-around">
+          <p class="counter">Ограничение по предложениям:  {{countSent}}/30000</p>
+        </v-row>
         <v-row
         align="center"
         justify="space-around">
@@ -33,7 +39,8 @@
                 class="btn"
                 color="primary"
                 elevation="7"
-                large>
+                large
+                @click="sendText()">
                 Action
             </v-btn>
         </v-row>
@@ -43,12 +50,36 @@
 </template>
 
 <script>
+import NavContent from './views/NavContent.vue';
   export default {
-    data: () => (
-      { 
-        drawer: null 
-      }),
+    components:{
+      "nav-content":NavContent
+    },
+    data() {
+      return{ 
+        drawer: null,
+        text:""
+      }
+      
+    },
+    computed:{
+      countSent(){
+        if(this.text=="")
+          return 0;
+        return this.text.split('.').length-1;
+      },
+      alarm(){
+        return this.countSent>=30000;
+      }
+    },
+    methods:{
+      sendText(){
+        if(this.alarm){
+        alert("Введено слишком много предложений!"); 
+        }
+    }
   }
+}
 </script>
 
 <style scoped>
@@ -58,5 +89,9 @@
 .btn{
   margin-top: 5%;
   width:200px;
+}
+.counter{
+  font-size:20px;
+  margin-top: 5%;
 }
 </style>
