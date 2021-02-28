@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController
 @RestController("/")
 class MainController(var highlightService: HighlightService) {
 
-    @CrossOrigin
     @PostMapping
     fun post(@RequestBody inputMessage: InputMessage)
     : OutputMessage {
