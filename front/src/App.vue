@@ -26,6 +26,9 @@
           clear-icon="mdi-close-circle"
           v-model="text"
           />
+          <span v-if="resp!='' && resp!=null" >Результат:</span>
+          <br>
+          <v-card-text v-html="resp"></v-card-text>
         </v-card>
         <v-row
         align="center"
@@ -51,7 +54,7 @@
 
 <script>
 import NavContent from './views/NavContent.vue';
-const axios = require('axios');
+import axios from "axios";
   export default {
     components:{
       "nav-content":NavContent
@@ -82,16 +85,14 @@ const axios = require('axios');
         else{
         await axios({
            method:'post',
-           url: "http://localhost:8080/",
+           url: "http://localhost:8081",
            data: {
              id:1,
              input_text:this.text
            }
-
          }).then(response => {
         this.resp = response.data.output_text;
          });
-          console.log(this.resp);
         }
     }
   }
