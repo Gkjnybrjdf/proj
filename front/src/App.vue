@@ -85,7 +85,7 @@ import axios from "axios";
         else{
         await axios({
            method:'post',
-           url: "http://localhost:8081",
+           url: "http://localhost:8081/message",
            data: {
              id:1,
              input_text:this.text
