@@ -12,7 +12,7 @@ class HighlightService {
     var app = "https://highlight-the-important.herokuapp.com/"
 
     fun getOutput(inputMessage: InputMessage): OutputMessage {
-        val resource = "/api/${inputMessage.type}/get_predict"
+        val resource = "api/${inputMessage.type}/get_predict"
 
         val response = RestTemplate().postForEntity("$app$resource", HttpEntity<InputMessage>(inputMessage), OutputMessage::class.java)
 
