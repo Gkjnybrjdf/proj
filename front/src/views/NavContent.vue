@@ -1,21 +1,21 @@
 <template>
     <div>
-        <v-row
-        align="center"
-        justify="space-around"
-        class="row-login">
-            <v-avatar
-            color="primary"
-            size="50"
-            class="avatar"
-            ></v-avatar>
-            <v-btn
-            color="primary"
-            elevation="2" 
-            class="login"
-            >LogIn/SingUp</v-btn>
-        </v-row>
+        <h2 class="model">ML Models:</h2>
         <v-divider class="splitter"></v-divider>
+        <span class="model">TF</span><v-icon  class="arrow"
+        large>
+        mdi-chevron-right
+        </v-icon>
+        <v-divider class="splitter"></v-divider>
+         <span class="model">TF-IDF</span><v-icon  class="arrow"
+        large>
+        mdi-chevron-right
+        </v-icon>
+        <v-divider class="splitter"></v-divider>
+         <span class="model">LDA</span><v-icon class="arrow"
+        large>
+        mdi-chevron-right
+        </v-icon>
     </div>
 </template>
 
@@ -35,5 +35,11 @@ export default {
 }
 .row-login{
     height:100px;
+}
+.model{
+    margin-left:20px;
+}
+.arrow{
+    margin:auto;
 }
 </style>

@@ -16,6 +16,33 @@
 
     <v-main>
        <v-container fluid>
+          <v-row class="row">
+            <v-col>
+            <h3  >Количество выделяемых предложений(%):</h3>
+            </v-col>
+            <v-col>
+            <h3  >Выбор нужной модели:</h3>
+            </v-col>
+          </v-row>
+
+         <v-row class="row">
+            <v-col>
+            <v-slider 
+              hint="Количество выделяемых предложений"
+              max="100"
+              min="0"
+               thumb-label
+            ></v-slider>
+          </v-col>
+          <v-col>
+            <v-select
+            
+              :items="items"
+              label="Model"
+            ></v-select>
+          </v-col>
+        </v-row>
+
         <v-card
         class="card"
         elevation=7
@@ -63,7 +90,8 @@ import axios from "axios";
       return{ 
         drawer: null,
         text:"",
-        resp:""
+        resp:"",
+        items:["1","2","3"]
       }
       
     },
@@ -110,5 +138,12 @@ import axios from "axios";
 .counter{
   font-size:20px;
   margin-top: 5%;
+}
+.slider{
+  width:50%;
+  display:inline-block;
+}
+.row{
+  padding:20px;
 }
 </style>
