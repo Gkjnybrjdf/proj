@@ -1,3 +1,7 @@
 package com.proj.model
 
-class InputMessage(var id: String, var input_text: String)
+enum class Type {
+    Tf, Tfidf, Lda
+}
+
+class InputMessage(var id: String, var input_text: String, var sentence_count : Long, var type: Type)
