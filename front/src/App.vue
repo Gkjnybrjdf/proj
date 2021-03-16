@@ -20,7 +20,7 @@
            <h3>Что это?</h3>
            <p>Инструмент поможет вам обработать большой объём текстовой информации различной специфики и выделить ключевую информацию.</p>
            <v-row justify="center">
-           <v-img max-height="250" max-width="800" class="img" src="@/assets/action2.png"/>
+           <v-img max-height="250" max-width="700" class="img" src="@/assets/action2.png"/>
            </v-row>
            <v-row justify="center">
              <v-col class="comment">
@@ -33,7 +33,7 @@
            <p>Наши модели машинного обучения основаны на экстрактивном подходе, который подразумевает под собой извлечение ключевых предложений из документа. Данный подход включает техники ранжирования
             ключевых предложений по важности (которая оценивается через различные метрики), после чего выбирается N наиболее релевантных предложений.</p>
             <v-row justify="center">
-          <v-img max-height="250"  max-width="800" class="img" src="@/assets/action.png"/>
+          <v-img max-height="250"  max-width="900" class="img" src="@/assets/action.png"/>
           </v-row>
           <h4 class="comment">Экстрактивная суммаризация</h4>
           <h3>Как этим пользоваться?</h3>
@@ -124,9 +124,10 @@ import axios from "axios";
         drawer: null,
         text:"",
         resp:"",
-        items:["Tf","Tfidf","Lda"],
+        items:["TF","TF-DF","LDA"],
         amount:10,
-        model:"Lda",
+        model:"LDA",
+        type:null
       }
       
     },
@@ -146,6 +147,12 @@ import axios from "axios";
         alert("Введено слишком много предложений!"); 
         }
         else{
+          if(this.model=="TF")
+            this.type="Tf";
+          if(this.model=="TF-DF")
+            this.type="Tfidf";
+          if(this.model=="LDA")
+            this.type="Lda";
         await axios({
            method:'post',
            url: "http://localhost:8081/message",
@@ -153,7 +160,7 @@ import axios from "axios";
              id:1,
              input_text:this.text,
              sentence_count:this.amount,
-             type:this.model
+             type:this.type
            }
          }).then(response => {
         this.resp = response.data.output_text;
