@@ -20,24 +20,20 @@
            <h3>Что это?</h3>
            <p>Инструмент поможет вам обработать большой объём текстовой информации различной специфики и выделить ключевую информацию.</p>
            <v-row justify="center">
-           <v-img max-height="150" max-width="1000" class="img" src="@/assets/action.png"/>
+           <v-img max-height="250" max-width="800" class="img" src="@/assets/action2.png"/>
            </v-row>
-           <v-row>
+           <v-row justify="center">
              <v-col class="comment">
-                <h4>Большой текст</h4>
-             </v-col>
-              <v-col class="comment">
-              <h4>=></h4>
-            </v-col>
-             <v-col class="comment">
-               <h4>Краткое резюме</h4>
+                <h4 class="undertext">Большой текст </h4>
+              <h4 class="undertext"> => </h4>
+               <h4 class="undertext" > Краткое резюме </h4>
              </v-col>
            </v-row> 
            <h3>Как это работает?</h3>
            <p>Наши модели машинного обучения основаны на экстрактивном подходе, который подразумевает под собой извлечение ключевых предложений из документа. Данный подход включает техники ранжирования
             ключевых предложений по важности (которая оценивается через различные метрики), после чего выбирается N наиболее релевантных предложений.</p>
             <v-row justify="center">
-          <v-img max-height="250"  max-width="800" class="img" src="@/assets/action2.png"/>
+          <v-img max-height="250"  max-width="800" class="img" src="@/assets/action.png"/>
           </v-row>
           <h4 class="comment">Экстрактивная суммаризация</h4>
           <h3>Как этим пользоваться?</h3>
@@ -191,6 +187,10 @@ import axios from "axios";
   padding-left:2%;
   padding-right:2%;
 }
+.undertext{
+  display:inline-block;
+  padding: 5px;
+}
 
 .comment{
   text-align:center;
@@ -201,5 +201,7 @@ import axios from "axios";
 .img{
   text-align:center;
   align-content:  center;
+  width:800px;
+  height: 200px;
 }
 </style>
