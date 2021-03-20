@@ -9,9 +9,7 @@
 
     <v-app-bar app>
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
-
       <v-toolbar-title>Text summarization</v-toolbar-title>
-
     </v-app-bar>
 
     <v-main>
@@ -40,72 +38,113 @@
          <p> 1. Вставьте необходимый текст в поле ниже.</p>
            <p>2. Выберете % текста, который вы хотите прочитать (по умолчанию = 10%)</p>
            <p>3. Выберете ML-модель (по умолчанию = LDA)</p>
-         </div>
-          <v-row class="row">
-            <v-col>
-            <h3  >Количество выделяемых предложений(%):</h3>
-            </v-col>
-
-            <v-col>
-            <h3  >Выбор нужной модели:</h3>
-            </v-col>
-          </v-row>
-
-         <v-row class="row">
-            <v-col>
-            <v-slider 
-              hint="Количество выделяемых предложений"
-              max="100"
-              min="0"
-              thumb-label
-              v-model="amount"
-            ></v-slider>
-          </v-col>
-          <v-col>
-            <v-select
-            
-              :items="items"
-              label="Model"
-              v-model="model"
-            ></v-select>
-          </v-col>
-        </v-row>
-        <v-row  justify="end">
+          </div>
+            <v-row class="row">
+              <v-col>
+                <h3  >Количество выделяемых предложений(%):</h3>
+              </v-col>
+              <v-col>
+                <h3  >Выбор нужной модели:</h3>
+              </v-col>
+            </v-row>
+            <v-row class="row">
+              <v-col>
+                <v-slider 
+                  hint="Количество выделяемых предложений"
+                  max="100"
+                  min="0"
+                  thumb-label
+                  v-model="amount"
+                ></v-slider>
+             </v-col>
+             <v-col>
+                <v-select
+                  :items="items"
+                  label="Model"
+                  v-model="model"
+                ></v-select>
+              </v-col>
+            </v-row>
+            <v-row>
+             <v-col><h3>Загрузка текста через фаил (.txt .docx)</h3></v-col>
+            </v-row>
+            <v-row>
+              <v-col>
+                  <v-file-input
+                  counter
+                  show-size
+                  truncate-length="19"
+                  v-model="file"
+                  accept=".txt,.docx"
+                ></v-file-input>
+              </v-col>
+           </v-row>
+            <v-row  justify="end">
               <country-flag class="flag" country='ru'/>
               <country-flag class="flag" country='gb'/>
-        </v-row>
-        <v-card
-        class="card"
-        elevation=7
-        >
-          <v-textarea
-          placeholder="Введите текст"
-          clearable
-          clear-icon="mdi-close-circle"
-          v-model="text"
-          />
-          <span v-if="resp!='' && resp!=null" >Результат:</span>
-          <br>
-          <v-card-text v-html="resp"></v-card-text>
-        </v-card>
-        <v-row
-        align="center"
-        justify="space-around">
-          <p class="counter">Ограничение по предложениям:  {{countSent}}/30000</p>
-        </v-row>
-        <v-row
-        align="center"
-        justify="space-around">
-            <v-btn
-                class="btn"
-                color="primary"
-                elevation="7"
-                large
-                @click="sendText()">
-                Action
-            </v-btn>
-        </v-row>
-      </v-container>
+            </v-row>
+            <v-card
+            class="card"
+            elevation=7
+            >
+         
+              <v-textarea
+              placeholder="Введите текст"
+              clearable
+              clear-icon="mdi-close-circle"
+              v-model="text"
+              :disabled="file!=null"
+              />
+              <v-row v-if="this.resp">
+                <span class="cond" style="margin-right:1%">Весь текст</span>
+                <v-switch
+                v-model="selected"
+              ></v-switch>
+                <span class="cond" style="margin-left:1%">Ключевой текст</span>
+                <v-col>
+                </v-col>
+                <v-col>
+                  <v-select
+                  class="download"
+                  :items="formats"
+                  v-model="format"
+                  label="Format for download file"
+                ></v-select>
+                 <v-btn
+                  class="download"
+                  color="primary"
+                  elevation="7"
+                  large
+                  @click="sendText()">
+                  Выгрузить фаил
+              </v-btn>
+                </v-col>
+              </v-row>
+              <span v-if="resp!='' && resp!=null" >Результат:</span>
+              <br>
+              <v-card-text >
+                <span v-if="selected" v-html="respSelected"></span>
+                <span v-else v-html="resp"></span>
+              </v-card-text>
+            </v-card>
+            <v-row
+            align="center"
+            justify="space-around">
+              <p class="counter">Ограничение по предложениям:  {{countSent}}/30000</p>
+            </v-row>
+            <v-row
+            align="center"
+            justify="space-around">
+              <v-btn
+                  class="btn"
+                  color="primary"
+                  elevation="7"
+                  large
+                  @click="sendText()">
+                  Action
+              </v-btn>
+            </v-row>
+        </v-container>
     </v-main>
   </v-app>
 </template>
@@ -124,10 +163,15 @@ import axios from "axios";
         drawer: null,
         text:"",
         resp:"",
-        items:["TF","TF-DF","LDA"],
+        respSelected:"",
+        items:["TF","TF-IDF","LDA"],
+        formats:['TXT','DOCX'],
+        format:null,
         amount:10,
         model:"LDA",
-        type:null
+        type:null,
+        selected:false,
+        file:null
       }
       
     },
@@ -149,10 +193,11 @@ import axios from "axios";
         else{
           if(this.model=="TF")
             this.type="Tf";
-          if(this.model=="TF-DF")
+          if(this.model=="TF-IDF")
             this.type="Tfidf";
           if(this.model=="LDA")
             this.type="Lda";
+            console.log(this.file);
         await axios({
            method:'post',
            url: "http://localhost:8081/message",
@@ -163,8 +208,10 @@ import axios from "axios";
              type:this.type
            }
          }).then(response => {
-        this.resp = response.data.output_text;
+          this.resp = response.data.output_text;
+          this.respSelected= this.resp.split('.').filter(x=>x.startsWith(' <s')).join('. ');
          });
+        
         }
     }
   }
@@ -210,5 +257,11 @@ import axios from "axios";
   align-content:  center;
   width:800px;
   height: 200px;
+}
+.cond{
+  padding-top:20px;
+}
+.download{
+  display:inline-block;
 }
 </style>

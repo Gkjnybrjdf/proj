@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*
 @Controller
 @RequestMapping("/")
 @SpringBootApplication
-class IndexController {
+open class IndexController {
     @GetMapping
     fun get() : String {
         return "index"
