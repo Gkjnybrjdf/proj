@@ -122,12 +122,15 @@
             align="center"
             justify="space-around">
               <v-btn
-                  class="btn"
+                  class="btn send"
                   color="primary"
                   elevation="7"
                   large
-                  @click="sendText()">
+                  @click="sendText()"
+                  :disabled="text=='' && file==null "
+                  >
                   Action
+                
               </v-btn>
             </v-row>
         </v-container>
@@ -243,5 +246,12 @@ import axios from "axios";
 }
 .download{
   display:inline-block;
+}
+.send{
+  position:fixed;
+  width:200px;
+  height:100px;
+  bottom:5vh;
+  right:5vh;
 }
 </style>
