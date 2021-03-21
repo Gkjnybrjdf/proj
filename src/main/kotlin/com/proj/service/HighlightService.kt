@@ -2,6 +2,7 @@ package com.proj.service
 
 import com.proj.model.InputMessage
 import com.proj.model.OutputMessage
+import com.proj.utils.ConstantMessages
 import org.springframework.http.HttpEntity
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
@@ -17,7 +18,7 @@ class HighlightService {
         val response = RestTemplate().postForEntity("$app$resource", HttpEntity<InputMessage>(inputMessage), OutputMessage::class.java)
 
         return if (response.body == null)
-            OutputMessage("-1", inputMessage.input_text, "Ошибка при выполнении запроса к сервису")
+            OutputMessage("-1", inputMessage.input_text, ConstantMessages.serviceRequestError)
         else
             response.body!!
     }
