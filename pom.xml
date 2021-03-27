@@ -14,10 +14,15 @@
 	<name>proj</name>
 	<description>syntax-proj</description>
 	<properties>
-		<java.version>15</java.version>
+		<java.version>13</java.version>
 		<kotlin.version>1.4.21</kotlin.version>
 	</properties>
 	<dependencies>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>3.15</version>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
