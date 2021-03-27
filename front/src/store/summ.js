@@ -66,7 +66,11 @@ const actions= {
         },
         changeSelected({commit},selected){
             commit('setSelected',selected);
+        },
+        clearAll({commit}){
+          commit('clear');
         }
+
       }
       export default{
           namespace:true,

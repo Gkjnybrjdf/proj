@@ -104,6 +104,17 @@
                   Action
                 
               </v-btn>
+              <v-btn
+                  class="btn clear"
+                  color="primary"
+                  elevation="7"
+                  large
+                  @click="clearAll()"
+                  :disabled="disactiveBtn"
+                  >
+                  Delete
+                
+              </v-btn>
             </v-row>
         </v-container>
 </template>
@@ -161,6 +172,11 @@ import { mapState } from 'vuex';
           this.actionSending=true;
           await this.$store.dispatch('send');
         }
+    },
+    clearAll(){
+      this.inputText="";
+      this.file=null;
+      this.$store.dispatch('clearAll');
     },
     example(){
       this.inputText="Со́лнце — одна из звёзд нашей Галактики (Млечный Путь) и единственная звезда Солнечной системы. Вокруг Солнца обращаются другие объекты этой системы: планеты и их спутники, карликовые планеты и их спутники, астероиды, метеороиды, кометы и космическая пыль."+
@@ -231,6 +247,13 @@ import { mapState } from 'vuex';
   display:inline-block;
 }
 .send{
+  position:fixed;
+  width:200px;
+  height:100px;
+  bottom:5vh;
+  right:40vh;
+}
+.clear{
   position:fixed;
   width:200px;
   height:100px;
