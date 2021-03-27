@@ -8,7 +8,7 @@
     </v-navigation-drawer>
 
     <v-app-bar app>
-      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-icon @click="drawer = !drawer">{{icons}}</v-icon>
        <router-link to="/" class="dec"><v-toolbar-title><h2>Text summarization</h2></v-toolbar-title></router-link>
     </v-app-bar>
 
@@ -22,6 +22,7 @@
 
 <script>
 import NavContent from './views/NavContent.vue';
+import { mdiCogs,mdiSigma  } from '@mdi/js'
  export default {
     components:{
       "nav-content":NavContent
@@ -29,7 +30,11 @@ import NavContent from './views/NavContent.vue';
     data(){
       return{
         drawer: null,
+        icons:mdiCogs,
+        name:mdiSigma
       }
+    },
+    created(){
     }
  }
 </script>
