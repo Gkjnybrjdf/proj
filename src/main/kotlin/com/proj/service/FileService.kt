@@ -46,7 +46,7 @@ class FileService {
         val doc = XWPFDocument()
         val paragraphs = text.split("<br/>")
         for (paragraph in paragraphs){
-            if (paragraph.isEmpty)
+            if (paragraph.isEmpty())
                 continue
             val docParagraph = doc.createParagraph()
             var isBold = false

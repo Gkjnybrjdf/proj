@@ -34,7 +34,7 @@
                   counter
                   show-size
                   truncate-length="19"
-                  v-model="file"
+                  v-model="fileValue"
                   accept=".txt,.docx"
                 ></v-file-input>
               </v-col>
@@ -57,7 +57,7 @@
               clearable
               clear-icon="mdi-close-circle"
               v-model="inputText"
-              :disabled="file!=null"
+              :disabled="fileValue!=null"
               />
               <v-row v-if="this.resp">
              <v-col>
@@ -132,7 +132,7 @@ import { mapState } from 'vuex';
         model:"LDA",
         inputText:"",
         percentSelected:10,
-        file:null,
+        fileValue:null,
         changeView:false,
         actionSending:false
       }
@@ -148,7 +148,8 @@ import { mapState } from 'vuex';
         items:state=>state.summ.items,
         formats:state=>state.summ.formats,
         format:state=>state.summ.format,
-        selected:state=>state.summ.selected
+        selected:state=>state.summ.selected,
+        file:state=>state.summ.file
       }),
       countSent(){
         if(this.text=="" || this.text == null)
@@ -159,7 +160,7 @@ import { mapState } from 'vuex';
         return this.countSent>=30000;
       },
       disactiveBtn(){
-        return this.inputText=='' && this.file==null ;
+        return this.inputText=='' && this.fileValue==null ;
       },
     },
     methods:{
@@ -172,10 +173,12 @@ import { mapState } from 'vuex';
           this.actionSending=true;
           await this.$store.dispatch('send');
         }
+        if(this.fileValue!=null)
+          this.fileValue=null;
     },
     clearAll(){
       this.inputText="";
-      this.file=null;
+      this.fileValue=null;
       this.$store.dispatch('clearAll');
     },
     example(){
@@ -188,13 +191,16 @@ import { mapState } from 'vuex';
     inputText(){
       this.$store.dispatch('changeText',this.inputText);
     },
-
     changeView(){
        this.$store.dispatch('changeSelected',this.changeView);
     },
     resp(){
       if(this.resp!="")
         this.actionSending=false;
+    },
+    fileValue(){
+      if(this.fileValue!=null)
+        this.$store.dispatch('changeFile',this.fileValue);
     }
   }
 }

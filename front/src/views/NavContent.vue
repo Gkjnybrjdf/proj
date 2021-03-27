@@ -15,11 +15,11 @@
                   v-model="model"
         ></v-select>
         <h4  >Сохранить как:</h4>
-        <v-radio-group v-model="format">
+        <v-radio-group v-model="formatValue">
         <v-radio
             v-for="n in formats"
             :key="n"
-            :label="`${n}`"
+            :label="n"
             :value="n"
         ></v-radio>
         </v-radio-group>
@@ -132,6 +132,7 @@ export default {
 
     data(){
         return {
+            formatValue:"",
             model:"LDA",
             percentSelected:10,
             lda_text:"<p>LDA (Latent Dirichlet Allocation - Модель латентного размещения Дирихле) принадлежит семейству порождающий вероятностных моделей, в которых темы представлены вероятностями появления каждого слова из заданного набора. В LDA распределение тем следует распределению Дирихле. Документы в свою очередь могут быть представлены как сочетания тем. Уникальная особенность моделей LDA состоит в том что темы не обязательно должны быть различными и слова могут встречаться в нескольких темах; это придает некоторую нечеткость определяемым темам, что может пригодиться для совладения с гибкостью языка.</p>"+
@@ -162,7 +163,7 @@ export default {
       }),
     },
     watch:{
-        model(){
+      model(){
       if(this.model=="TF")
            this.$store.dispatch('changeType',"Tf");
       if(this.model=="TF-IDF")
@@ -172,7 +173,12 @@ export default {
         },
             percentSelected(){
        this.$store.dispatch('changeAmount',this.percentSelected);
-            }
+            },
+       async formatValue(){
+         console.log(this.formatValue)
+          this.$store.dispatch('changeFormat',this.formatValue);
+          await this.$store.dispatch('downloadText');
+        }
     },
     
 }
