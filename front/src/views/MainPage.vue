@@ -12,7 +12,7 @@
               <h4 class="undertext"> => </h4>
                <h4 class="undertext" > Краткое резюме </h4>
              </v-col>
-           </v-row> 
+           </v-row>
            <h3>Как это работает?</h3>
            <p>Наши модели машинного обучения основаны на экстрактивном подходе, который подразумевает под собой извлечение ключевых предложений из документа. Данный подход включает техники ранжирования
             ключевых предложений по важности (которая оценивается через различные метрики), после чего выбирается N наиболее релевантных предложений.</p>
@@ -35,7 +35,7 @@
             </v-row>
             <v-row class="row">
               <v-col>
-                <v-slider 
+                <v-slider
                   hint="Количество выделяемых предложений"
                   max="100"
                   min="0"
@@ -73,7 +73,7 @@
             class="card"
             elevation=7
             >
-         
+
               <v-textarea
               placeholder="Введите текст"
               clearable
@@ -101,7 +101,8 @@
                   color="primary"
                   elevation="7"
                   large
-                  @click="sendText()">
+                  :loading="waitingFile"
+                  @click="downloadText()">
                   Выгрузить фаил
               </v-btn>
                 </v-col>
@@ -126,11 +127,12 @@
                   color="primary"
                   elevation="7"
                   large
+                  :loading="waitingOutput"
                   @click="sendText()"
                   :disabled="text=='' && file==null "
                   >
                   Action
-                
+
               </v-btn>
             </v-row>
         </v-container>
@@ -138,65 +140,102 @@
 <script>
 import CountryFlag from 'vue-country-flag'
 import axios from "axios";
-  export default {
-    components:{
-       CountryFlag
-    },
-    data() {
-      return{ 
 
-        text:"",
-        resp:"",
-        respSelected:"",
-        items:["TF","TF-IDF","LDA"],
-        formats:['TXT','DOCX'],
-        format:null,
-        amount:10,
-        model:"LDA",
-        type:null,
-        selected:false,
-        file:null
-      }
-      
+export default {
+  components: {
+    CountryFlag
+  },
+  data() {
+    return {
+      text: "",
+      resp: "",
+      respSelected: "",
+      items: ["TF", "TF-IDF", "LDA"],
+      formats: ['TXT', 'DOCX'],
+      format: null,
+      amount: 10,
+      model: "LDA",
+      type: null,
+      selected: false,
+      file: null,
+      waitingOutput: false,
+      waitingFile: false,
+    }
+
+  },
+  computed: {
+    countSent() {
+      if (this.text == "" || this.text == null)
+        return 0;
+      return this.text.split('.').length - 1;
     },
-    computed:{
-      countSent(){
-        if(this.text=="" || this.text == null)
-          return 0;
-        return this.text.split('.').length-1;
-      },
-      alarm(){
-        return this.countSent>=30000;
-      }
+    alarm() {
+      return this.countSent >= 30000;
+    }
+  },
+  methods: {
+    async downloadText(){
+      this.waitingFile = true
+      let data = new FormData()
+      data.append("file_type", this.format)
+      data.append("output_text", this.selected ? this.respSelected : this.resp)
+      await axios({
+        method: 'post',
+        url: "http://localhost:8081/file/download",
+        data: data,
+        responseType: 'blob'
+      })
+          .then(resp => {
+            const url = window.URL.createObjectURL(new Blob([resp.data]))
+            const link = document.createElement('a')
+            link.href = url
+            link.setAttribute('download', `file_name.${this.format.toLowerCase()}`)
+            document.body.appendChild(link)
+            link.click()
+          })
+      .finally(() => {
+        this.waitingFile = false
+      })
     },
-    methods:{
-     async sendText(){
-        if(this.alarm){
-        alert("Введено слишком много предложений!"); 
+    async sendText() {
+      if (this.alarm) {
+        alert("Введено слишком много предложений!");
+      } else {
+        if (this.model === "TF")
+          this.type = "Tf";
+        if (this.model === "TF-IDF")
+          this.type = "Tfidf";
+        if (this.model === "LDA")
+          this.type = "Lda";
+
+        let response = undefined
+        this.waitingOutput = true
+        if (this.file) {
+          let data = new FormData()
+          data.append("sentence_count", this.amount)
+          data.append("type", this.type)
+          data.append("file", this.file)
+          response = await axios({
+            method: 'post',
+            url: "http://localhost:8081/file/upload",
+            data: data
+          })
+        } else {
+          response = await axios({
+            method: 'post',
+            url: "http://localhost:8081/message",
+            data: {
+              id: 1,
+              input_text: this.text,
+              sentence_count: this.amount,
+              type: this.type
+            }
+          })
         }
-        else{
-          if(this.model=="TF")
-            this.type="Tf";
-          if(this.model=="TF-IDF")
-            this.type="Tfidf";
-          if(this.model=="LDA")
-            this.type="Lda";
-            console.log(this.file);
-        await axios({
-           method:'post',
-           url: "http://localhost:8081/message",
-           data: {
-             id:1,
-             input_text:this.text,
-             sentence_count:this.amount,
-             type:this.type
-           }
-         }).then(response => {
-          this.resp = response.data.output_text;
-          this.respSelected= this.resp.split('.').filter(x=>x.startsWith(' <s')).join('. ');
-         });
-        
-        }
+        this.resp = response.data.output_text;
+        this.respSelected = this.resp.split('.').filter(x => x.startsWith(' <s')).join('. ');
+        this.waitingOutput = false
+      }
     }
   }
 }

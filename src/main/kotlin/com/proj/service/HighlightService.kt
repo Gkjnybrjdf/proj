@@ -19,7 +19,11 @@ class HighlightService {
 
         return if (response.body == null)
             OutputMessage("-1", inputMessage.input_text, ConstantMessages.serviceRequestError)
-        else
-            response.body!!
+        else {
+            val result = response.body!!
+            val replaced = result.output_text.replace("\n", "<br/>")
+            result.output_text = replaced
+            result
+        }
     }
 }
