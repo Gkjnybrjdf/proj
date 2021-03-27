@@ -21,36 +21,10 @@
           </v-row>
           <h4 class="comment">Экстрактивная суммаризация</h4>
           <h3>Как этим пользоваться?</h3>
-         <p> 1. Вставьте необходимый текст в поле ниже.</p>
+            <p> 1. Вставьте необходимый текст в поле ниже.</p>
            <p>2. Выберете % текста, который вы хотите прочитать (по умолчанию = 10%)</p>
            <p>3. Выберете ML-модель (по умолчанию = LDA)</p>
           </div>
-            <v-row class="row">
-              <v-col>
-                <h3  >Количество выделяемых предложений(%):</h3>
-              </v-col>
-              <v-col>
-                <h3  >Выбор нужной модели:</h3>
-              </v-col>
-            </v-row>
-            <v-row class="row">
-              <v-col>
-                <v-slider 
-                  hint="Количество выделяемых предложений"
-                  max="100"
-                  min="0"
-                  thumb-label
-                  v-model="amount"
-                ></v-slider>
-             </v-col>
-             <v-col>
-                <v-select
-                  :items="items"
-                  label="Model"
-                  v-model="model"
-                ></v-select>
-              </v-col>
-            </v-row>
             <v-row>
              <v-col><h3>Загрузка текста через фаил (.txt .docx)</h3></v-col>
             </v-row>
@@ -65,6 +39,10 @@
                 ></v-file-input>
               </v-col>
            </v-row>
+           <v-btn
+            elevation="2"
+            @click="example"
+          >Text example</v-btn>
             <v-row  justify="end">
               <country-flag class="flag" country='ru'/>
               <country-flag class="flag" country='gb'/>
@@ -78,37 +56,31 @@
               placeholder="Введите текст"
               clearable
               clear-icon="mdi-close-circle"
-              v-model="text"
+              v-model="inputText"
               :disabled="file!=null"
               />
               <v-row v-if="this.resp">
-                <span class="cond" style="margin-right:1%">Весь текст</span>
+             <v-col>
+              <span v-if="resp!='' && resp!=null" >Результат:</span>
+                </v-col>
+                <v-col>
+                </v-col>
+            
+                       <span class="cond" style="margin-right:1%">Весь текст</span>
                 <v-switch
-                v-model="selected"
+                v-model="changeView"
               ></v-switch>
                 <span class="cond" style="margin-left:1%">Ключевой текст</span>
-                <v-col>
-                </v-col>
-                <v-col>
-                  <v-select
-                  class="download"
-                  :items="formats"
-                  v-model="format"
-                  label="Format for download file"
-                ></v-select>
-                 <v-btn
-                  class="download"
-                  color="primary"
-                  elevation="7"
-                  large
-                  @click="sendText()">
-                  Выгрузить фаил
-              </v-btn>
-                </v-col>
               </v-row>
-              <span v-if="resp!='' && resp!=null" >Результат:</span>
-              <br>
-              <v-card-text >
+              <v-row justify="center">
+             <v-progress-circular
+                indeterminate
+                color="primary"
+                v-if="actionSending"
+                class="loader"
+              ></v-progress-circular>
+              </v-row>
+              <v-card-text v-if="!actionSending" >
                 <span v-if="selected" v-html="respSelected"></span>
                 <span v-else v-html="resp"></span>
               </v-card-text>
@@ -127,7 +99,7 @@
                   elevation="7"
                   large
                   @click="sendText()"
-                  :disabled="text=='' && file==null "
+                  :disabled="disactiveBtn"
                   >
                   Action
                 
@@ -135,31 +107,38 @@
             </v-row>
         </v-container>
 </template>
+
 <script>
 import CountryFlag from 'vue-country-flag'
-import axios from "axios";
+import { mapState } from 'vuex';
   export default {
     components:{
        CountryFlag
     },
     data() {
       return{ 
-
-        text:"",
-        resp:"",
-        respSelected:"",
-        items:["TF","TF-IDF","LDA"],
-        formats:['TXT','DOCX'],
-        format:null,
-        amount:10,
+        
         model:"LDA",
-        type:null,
-        selected:false,
-        file:null
+        inputText:"",
+        percentSelected:10,
+        file:null,
+        changeView:false,
+        actionSending:false
       }
       
     },
     computed:{
+      ...mapState({
+        text:state=>state.summ.text,
+        resp:state=>state.summ.resp,
+        amount:state=>state.summ.amount,
+        type:state=>state.summ.type,
+        respSelected:state=>state.summ.respSelected,
+        items:state=>state.summ.items,
+        formats:state=>state.summ.formats,
+        format:state=>state.summ.format,
+        selected:state=>state.summ.selected
+      }),
       countSent(){
         if(this.text=="" || this.text == null)
           return 0;
@@ -167,36 +146,39 @@ import axios from "axios";
       },
       alarm(){
         return this.countSent>=30000;
-      }
+      },
+      disactiveBtn(){
+        return this.inputText=='' && this.file==null ;
+      },
     },
     methods:{
      async sendText(){
+
         if(this.alarm){
         alert("Введено слишком много предложений!"); 
         }
         else{
-          if(this.model=="TF")
-            this.type="Tf";
-          if(this.model=="TF-IDF")
-            this.type="Tfidf";
-          if(this.model=="LDA")
-            this.type="Lda";
-            console.log(this.file);
-        await axios({
-           method:'post',
-           url: "http://localhost:8081/message",
-           data: {
-             id:1,
-             input_text:this.text,
-             sentence_count:this.amount,
-             type:this.type
-           }
-         }).then(response => {
-          this.resp = response.data.output_text;
-          this.respSelected= this.resp.split('.').filter(x=>x.startsWith(' <s')).join('. ');
-         });
-        
+          this.actionSending=true;
+          await this.$store.dispatch('send');
         }
+    },
+    example(){
+      this.inputText="Со́лнце — одна из звёзд нашей Галактики (Млечный Путь) и единственная звезда Солнечной системы. Вокруг Солнца обращаются другие объекты этой системы: планеты и их спутники, карликовые планеты и их спутники, астероиды, метеороиды, кометы и космическая пыль."+
+      "По спектральной классификации Солнце относится к типу G2V (жёлтый карлик). Средняя плотность Солнца составляет 1,4 г/см³ (в 1,4 раза больше, чем у воды). Эффективная температура поверхности Солнца — 5780 кельвин[4]. Поэтому Солнце светит почти белым светом, но прямой свет Солнца у поверхности нашей планеты приобретает некоторый жёлтый оттенок из-за более сильного рассеяния и поглощения коротковолновой части спектра атмосферой Земли (при ясном небе, вместе с голубым рассеянным светом от неба, солнечный свет вновь даёт белое освещение)."+
+      "Солнечное излучение поддерживает жизнь на Земле (свет необходим для начальных стадий фотосинтеза), определяет климат."
+    }
+  },
+  watch:{
+    inputText(){
+      this.$store.dispatch('changeText',this.inputText);
+    },
+
+    changeView(){
+       this.$store.dispatch('changeSelected',this.changeView);
+    },
+    resp(){
+      if(this.resp!="")
+        this.actionSending=false;
     }
   }
 }
@@ -243,6 +225,7 @@ import axios from "axios";
 }
 .cond{
   padding-top:20px;
+  color:rgba(128, 126, 126, 0.774);
 }
 .download{
   display:inline-block;
@@ -253,5 +236,8 @@ import axios from "axios";
   height:100px;
   bottom:5vh;
   right:5vh;
+}
+.loader{
+  margin:auto;
 }
 </style>
