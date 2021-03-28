@@ -255,14 +255,14 @@ import { mapState } from 'vuex';
 }
 .send{
   position:fixed;
-  width:200px;
+  width:125px;
   height:100px;
   bottom:5vh;
-  right:40vh;
+  right:30vh;
 }
 .clear{
   position:fixed;
-  width:200px;
+  width:125px;
   height:100px;
   bottom:5vh;
   right:5vh;
