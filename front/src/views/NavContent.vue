@@ -170,6 +170,8 @@ export default {
             this.$store.dispatch('changeType',"Tfidf");
       if(this.model=="LDA")
             this.$store.dispatch('changeType',"Lda");
+      if(this.model=="TextRank")
+            this.$store.dispatch('changeType',"TextRank");
         },
             percentSelected(){
        this.$store.dispatch('changeAmount',this.percentSelected);

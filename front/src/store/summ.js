@@ -7,7 +7,7 @@ const state={
         amount:10,
         type:"Lda",
         respSelected:"",
-        items:["TF","TF-IDF","LDA"],
+        items:["TF","TF-IDF","LDA","TextRank"],
         formats:['TXT','DOCX'],
         format:null,
         selected:false,
