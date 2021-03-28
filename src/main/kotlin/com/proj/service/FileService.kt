@@ -42,6 +42,7 @@ class FileService {
     : String{
         return text.replace(Regex("</?strong>"), "")
     }
+
     private fun makeDocx(text: String) : ByteArray {
         val doc = XWPFDocument()
         val paragraphs = text.split("<br/>")

@@ -21,7 +21,7 @@ class HighlightService {
             OutputMessage("-1", inputMessage.input_text, ConstantMessages.serviceRequestError)
         else {
             val result = response.body!!
-            val replaced = result.output_text.replace("\n", "<br/>")
+            val replaced = result.output_text.replace("<br>", "<br/>")
             result.output_text = replaced
             result
         }
