@@ -61,7 +61,7 @@ class FileService {
                             paragraph.indexOf("<strong>", index)
 
                 if (newIndex == -1) {
-                    run.setText(removeStrong(paragraph.substring(index, paragraph.length - 1)))
+                    run.setText(removeStrong(paragraph.substring(index, paragraph.length)))
                     run.isBold = isBold
                     break
                 } else {
