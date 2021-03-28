@@ -178,6 +178,7 @@ export default {
          console.log(this.formatValue)
           this.$store.dispatch('changeFormat',this.formatValue);
           await this.$store.dispatch('downloadText');
+          this.formatValue=null;
         }
     },
     

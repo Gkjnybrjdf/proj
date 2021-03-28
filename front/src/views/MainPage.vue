@@ -26,7 +26,7 @@
            <p>3. Выберете ML-модель (по умолчанию = LDA)</p>
           </div>
             <v-row>
-             <v-col><h3>Загрузка текста через фаил (.txt .docx)</h3></v-col>
+             <v-col><h3>Загрузка текста через файл (.txt .docx)</h3></v-col>
             </v-row>
             <v-row>
               <v-col>
@@ -42,6 +42,7 @@
            <v-btn
             elevation="2"
             @click="example"
+            :disabled="fileValue!=null"
           >Text example</v-btn>
             <v-row  justify="end">
               <country-flag class="flag" country='ru'/>
