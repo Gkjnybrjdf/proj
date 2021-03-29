@@ -201,9 +201,9 @@ export default {
     height:100px;
 }
 .container{
-    margin-left:20px;
+    margin:auto;
     margin-top:10px;
-    margin-right:20px;
+    
 }
 .arrow{
     margin:auto;
