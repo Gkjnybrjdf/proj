@@ -203,6 +203,7 @@ export default {
 .container{
     margin-left:20px;
     margin-top:10px;
+    margin-right:20px;
 }
 .arrow{
     margin:auto;
